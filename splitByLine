@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# Initialize variables 
+splits=$1
+f=$2
+
+for i in $(seq 1 $splits)
+do
+
+	fout="${f%.*}_$i.txt"
+	awk -v n=$splits -v i=$i 'NR%n==(i-1)' $f > $fout
+
+	echo "i: $i"
+	#echo $fout
+	#cat $fout
+	echo " "
+
+done

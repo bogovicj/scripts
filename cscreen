@@ -1,0 +1,16 @@
+#!/bin/bash
+
+EXPECTED_ARGS=1
+
+if [ $# -ne $EXPECTED_ARGS ] 
+then
+	echo ' '
+	echo 'Input a number corresponding to the screen session you want to connect to'
+	echo ' '
+	screen -ls
+else
+	sid=`screen -ls | awk -v f=$1 'NR==(f+1) {print $(1)}'`
+	echo $sid
+	screen -r $sid
+fi
+

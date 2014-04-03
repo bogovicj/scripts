@@ -1,0 +1,19 @@
+#!/bin/bash
+
+testmode=0
+if [ $1 = "-t" ]; then
+   testmode=1
+   shift;
+fi
+
+sedcmd=$1
+shift;
+
+for f in "$@"; do
+   if [ $testmode = "1" ]; then
+      echo $f | sed $sedcmd
+   else
+      mv $f `echo $f | sed $sedcmd`
+   fi
+done
+
