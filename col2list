@@ -1,0 +1,13 @@
+#!/bin/bash
+# COLlection to LIST
+#
+# Converts a text file with comma - separated list on one line
+# to a list with one entry on each line 
+# 
+# John Bogovic
+
+list=$1
+listnoext=${list%.*}
+listext=${list##*.}
+
+cat $list | tr ',' '\n' > $listnoext"-vec."$listext

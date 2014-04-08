@@ -1,0 +1,12 @@
+#!/bin/bash
+# LIST to COLlection
+#
+# Converts a text file with entries on each line to a
+# comma - separated list on one line
+# 
+# John Bogovic
+
+list=$1
+listnoext=${list%.*}
+listext=${list##*.}
+cat $list | tr '\n' ',' | sed 's/,$//' > $listnoext"-col."$listext
