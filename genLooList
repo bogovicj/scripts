@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# give the inputs a useful name
+list=$1
+dest=$2
+
+# get number of lines - each line should be a subject
+num=`cat $list | wc | awk '{print $1}'`
+
+#echo "Found "$num" lines in the file"
+
+for (( i=1; i<="$num"; i++))
+do
+   #echo $i
+   awk -v i=$i 'NR != i' $list | tr '\n' ',' | sed 's/,$/\n/' >> $dest
+done # i loop
+
