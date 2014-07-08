@@ -1,0 +1,2 @@
+#!/bin/bash
+qstat | awk '$5=="qw" {wcount+=1; wsum+=$9} $5=="r" {rcount+=1; rsum+=$9} END {printf "waiting: %d jobs\nrunning: %d jobs, %d slots\n", wcount, rcount, rsum }'
