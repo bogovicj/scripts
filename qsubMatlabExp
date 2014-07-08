@@ -1,0 +1,31 @@
+#!/bin/bash
+
+script_name=$1
+description=$2
+
+if [ "$3" ]
+then
+   pe_batch=$3
+else
+   pe_batch="1"
+fi
+
+if [ "$4" ]
+then
+   do_dbstop=$3
+else
+   do_dbstop="0"
+fi
+mlcmd="run_script('$script_name', '$description'); exit;"
+
+#############################################
+# Can't effectively debug when in qsub mode #
+#############################################
+#if [ "$do_dbstop" == "1" ]
+#then
+#   mlcmd="dbstop if error; $mlcmd"
+#fi
+#echo $mlcmd
+
+qsub_cmd="qsub -pe batch $pe_batch 'mlb -nodesktop -nosplash -r $mlcmd'"
+echo $qsub_cmd
