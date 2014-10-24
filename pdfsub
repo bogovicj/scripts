@@ -1,0 +1,19 @@
+#!/bin/bash
+# Extracts a subset of pages from an input pdf
+#
+# pdfsub <input_pdf> <start_page> <end_page> <output_pdf (optional)>
+
+pdfin=$1
+startpage=$2
+endpage=$3
+
+if [ "$4" ]
+then
+    pdfout=$4
+else
+    pdfinname=${pdfin%.*}
+    pdfout="$pdfinname"_sub-$startpage-$endpage".pdf"
+    #echo $pdfout
+fi
+
+gs -sDEVICE=pdfwrite -dNOPAUSE -dBATCH -dSAFER -dFirstPage=$startpage -dLastPage=$endpage -sOutputFile=$pdfout $pdfin
