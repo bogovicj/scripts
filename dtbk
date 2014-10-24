@@ -1,0 +1,13 @@
+#!/bin/bash
+#
+# Backup of  
+#
+# John Bogovic
+
+dt=`date +%Y%m%d%H%M%S`
+in=$1
+out="$in"_"$dt".bak
+echo $out
+
+cp $in $out
+chmod a-w $out
