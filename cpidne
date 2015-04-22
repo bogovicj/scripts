@@ -1,0 +1,29 @@
+#!/bin/bash
+# "copy if does not exist"
+#
+# Usage:
+#   cpidne <destination directory> < files ... >
+
+testmode=0
+if [ $1 = "-t" ]; then
+   testmode=1
+   shift;
+fi
+
+cpDestDir=$1
+
+shift;
+
+for f in "$@"; do
+    if [ ! -f $cpDestDir/$f ];
+    then
+        if [ $testmode == 1 ];
+        then
+            echo $f
+        else
+            cp -v $f $cpDestDir
+        fi
+    else
+        echo "exists, skipping $f"
+    fi
+done
