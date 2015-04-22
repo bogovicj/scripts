@@ -1,0 +1,27 @@
+#!/bin/bash
+# multi-copy 
+#
+# Usage examples:
+# mcp <sedcmd> <files...>
+#   Applies sedcmd to change the name of each file
+#
+# mcp -t <sedcmd> <files...> 
+#   Test-mode: prints out names of destination files without copying
+
+testmode=0
+if [ $1 = "-t" ]; then
+   testmode=1
+   shift;
+fi
+
+sedcmd=$1
+shift;
+
+for f in "$@"; do
+   if [ $testmode = "1" ]; then
+      echo $f | sed $sedcmd
+   else
+      cp $f `echo $f | sed $sedcmd`
+   fi
+done
+
