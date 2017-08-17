@@ -1,0 +1,9 @@
+#!/bin/bash
+# Concatenates pdfs
+#
+# pdfcat <output_pdf> <input_pdf_list...>
+
+out="$1"
+shift
+
+gs -sDEVICE=pdfwrite -dNOPAUSE -dBATCH -dSAFER -sOutputFile=$out $@ 
