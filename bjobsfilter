@@ -1,0 +1,18 @@
+#!/bin/bash
+# bjobsfilter
+#   Returns the LSF jobids for jobs such that a field  matches the input pattern
+#   Usage:
+#       bjobsfilter <pattern> <field DEFAULT=cmd>  
+
+pattern="$1"
+shift
+
+field="cmd"
+if [[ $1 ]];
+then
+    field=$1
+    shift
+fi
+
+echo $field
+bjobs -o "id $field" | grep $pattern | awk '{print $1}'
