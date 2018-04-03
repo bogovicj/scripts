@@ -6,14 +6,16 @@ if [ $1 = "-t" ]; then
    shift;
 fi
 
-sedcmd=$1
+sedcmd="$1"
 shift;
 
 for f in "$@"; do
    if [ $testmode = "1" ]; then
-      echo $f | sed $sedcmd
+      echo $f | sed "$sedcmd"
    else
-      mv $f `echo $f | sed $sedcmd`
+      fo=$(echo "$f" | sed "$sedcmd")
+      echo "$f\n  -> $fo"
+      mv "$f" "$fo"
    fi
 done
 
