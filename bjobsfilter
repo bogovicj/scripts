@@ -14,5 +14,4 @@ then
     shift
 fi
 
-echo $field
 bjobs -o "id $field" | grep $pattern | awk '{print $1}'

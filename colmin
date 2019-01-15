@@ -1,0 +1,11 @@
+#!/bin/bash
+# Usage:
+#    colmin <column> <awk args> <file path>
+
+col="$1"
+awkargs="$2"
+f="$3"
+
+echo $awkargs
+
+awk $awkargs -v i="$col" 'NR==1{min = $i + 0; next} {if($i < min) min=$i} END {print min}' $f

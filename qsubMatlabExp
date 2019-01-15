@@ -16,7 +16,7 @@ then
 else
    do_dbstop="0"
 fi
-mlcmd="run_script('$script_name', '$description'); exit;"
+mlcmd="run_script('$script_name', '$description', 1);"
 
 #############################################
 # Can't effectively debug when in qsub mode #
@@ -27,5 +27,9 @@ mlcmd="run_script('$script_name', '$description'); exit;"
 #fi
 #echo $mlcmd
 
-qsub_cmd="qsub -pe batch $pe_batch 'mlb -nodesktop -nosplash -r $mlcmd'"
-echo $qsub_cmd
+#qsub_cmd="qsub -pe batch $pe_batch 'cd /groups/saalfeld/home/bogovicj/dev/main/hhmi-exp; /misc/local/matlab-2013b/bin/matlab -nodesktop -nosplash -r '$mlcmd''"
+#echo $qsub_cmd
+
+echo "cd /groups/saalfeld/home/bogovicj/dev/main/hhmi-exp; /misc/local/matlab-2013b/bin/matlab -nodesktop -nosplash -r \"$mlcmd\"" | qsub -pe batch $pe_batch -N $script_name -l matlab=1
+
+#echo "cd /groups/saalfeld/home/bogovicj/dev/main/hhmi-exp; /misc/local/matlab-2013b/bin/matlab -nodesktop -nosplash -r \"$mlcmd\"" | qsub -pe batch -o ~/clusterJobs/ $pe_batch -N $script_name
