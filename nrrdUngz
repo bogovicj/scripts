@@ -1,0 +1,44 @@
+#!/bin/bash
+
+OUTPUT=""
+SUFFIX="_ungz"
+
+while getopts "i:o:s:" OPT
+do
+    case $OPT in
+    i) # input
+       INPUT=$OPTARG
+       ;;
+    o) # output
+       OUTPUT=$OPTARG
+       ;;
+    s) # suffix
+       SUFFIX="$OPTARG"
+       ;;
+    \?) # getopts issues an error message
+       echo "$USAGE" >&2
+       exit 1
+       ;;
+    esac
+done
+
+if [ -z $INPUT ];
+then
+    echo "no input given"
+    exit
+fi
+
+if [[ ! $INPUT = *.nrrd ]];
+then
+    echo "must pass nrrd file"
+    exit 1
+fi
+
+if [ -z $OUTPUT ];
+then
+    echo "inferring output"
+    OUTPUT=$(echo $INPUT | sed "s/.nrrd/$SUFFIX.nrrd/g")
+fi
+
+#echo "unu save -f nrrd -e gzip -i $INPUT -o $OUTPUT"
+unu save -f nrrd -e raw -i $INPUT -o $OUTPUT
