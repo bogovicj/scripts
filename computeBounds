@@ -1,0 +1,20 @@
+#!/bin/bash
+
+in=$1
+
+minX=$(colmin 1 ' ' $1)
+minY=$(colmin 2 ' ' $1)
+minZ=$(colmin 3 ' ' $1)
+
+maxX=$(colmax 1 ' ' $1)
+maxY=$(colmax 2 ' ' $1)
+maxZ=$(colmax 3 ' ' $1)
+
+meanX=$(colavg 1 ' ' $1)
+meanY=$(colavg 2 ' ' $1)
+meanZ=$(colavg 3 ' ' $1)
+
+echo "$minX $minY $minZ"
+echo "$maxX $maxY $maxZ"
+echo "$meanX $meanY $meanZ"
+
