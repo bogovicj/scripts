@@ -1,0 +1,151 @@
+#!/bin/bash
+# runs scripts and stores them in a loction specified by your
+# EXP_SAVE_PATH environment variable
+# if EXP_SAVE_PATH is not specified, it will default to $HOME/.experiments-log
+
+
+echo $EXP_SAVE_PATH
+
+ARGS=""
+BSUB=""
+HERE=""
+SUMMARY=""
+INPUT=""
+BSUBOPTS=""
+
+while getopts "a:bd:hi:o:s:" OPT
+do
+    case $OPT in
+    a)  # script arguments
+        echo "Run with bsub"
+        ARGS="$OPTARG"
+       ;;
+    b)  # bsub flag
+        echo "Run with bsub"
+        BSUB="1"
+       ;;
+    d)  # directory
+        EXP_SAVE_PATH="$OPTARG"
+       ;;
+    h)  # here
+        echo "Using current location as save path."
+        HERE="1"
+        EXP_SAVE_PATH=$(pwd)
+       ;;
+    i)  # input script and arguments
+        INPUT="$OPTARG"
+       ;;
+    o)  # bsub options
+        BSUB="1"
+        BSUBOPTS="$OPTARG"
+       ;;
+    s)  # summary
+        SUMMARY="$OPTARG"
+       ;;
+    \?) # getopts issues an error message
+       echo "$USAGE" >&2
+       exit 1
+       ;;
+    esac
+done
+
+if [ -z "$EXP_SAVE_PATH" ]; then
+    echo "Need to set output path with -h, -d or by setting the EXP_SAVE_PATH environment variable. Exiting"
+    exit 1
+fi
+
+if [ -z $INPUT ];
+then
+    echo "must supply an input"
+    exit 1
+fi
+ 
+
+script_name="$INPUT"
+if [[ "$INPUT" == */* ]]; then
+    script_path="$( realpath $script_name )"
+    script_name="$( basename $script_name )"
+else
+    script_path="$( realpath $script_name )"
+fi 
+
+## find the next experiment number
+# the line below does not work - why?
+#expnum=`ls -d $EXP_SAVE_PATH"/saved_exp/*/" | tail -n 1 | sed 's/^exp\([0-9]\+\).*/\1/g'`
+
+# check that directory exists
+if [ ! -d $EXP_SAVE_PATH ]; then
+    echo "Creating saved shell experiments directory"
+	mkdir -p $EXP_SAVE_PATH
+fi
+
+startDir=$(pwd)
+
+cd $EXP_SAVE_PATH
+
+# Check to see if there are any experiments yet
+# if not, create an exp0001 directory
+if [ -z `find . -type d -name 'exp0000*'` ]; then
+	echo "first exp"
+	expnum="0000"
+else
+   expnum=$(ls -d ./exp*/ | tail -n 1 | sed 's:^./exp0*\([0-9]\+\).*:\1:g')
+   ((expnum++))
+   expnum=`printf '%04d' $expnum`
+   echo $expnum
+fi
+
+# Grab time stamp
+time_suffix=`date +%Y%m%d%H%M%S`
+expdir="$EXP_SAVE_PATH/exp"$expnum"_"$script_name"_"$time_suffix
+
+
+## TODO - might need to do some checking in case jobs are called very quickly...
+#while [ -d $expdir ]; do
+#    # if the directory exists, it means we have an identical time stamp
+#    sleep 2
+#    time_suffix=`date +%Y%m%d%H%M%S` 
+#    expdir="$EXP_SAVE_PATH/saved_sh_exp/exp"$expnum"_"$script_name"_"$time_suffix 
+#done
+
+echo $expdir
+
+
+mkdir -p $expdir
+
+# put a read-only copy of the script into the output directory
+cp $script_path $expdir
+chmod 0444 $expdir/$script_name
+chmod +x $expdir/$script_name
+
+outputfn="$expdir/output.txt"
+
+
+
+echo "exp$expnum: $script_name" > $outputfn
+echo $SUMMARY >> $outputfn
+echo " "  >> $outputfn
+
+cd $expdir
+if [ ! -z $BSUB ];
+then
+    echo "doing bsub"
+    echo "  with options: $BSUBOPTS"
+
+    job="job_${expnum}.sh"
+    echo "$script_path $ARGS >> $outputfn" > $job
+    chmod +x $job
+
+    if [ -z $BSUBOPTS ];
+    then
+        subJobs $job
+    else
+        subJobs -o "$BSUBOPTS" $job
+    fi
+else
+    # run the script and save output
+    #echo "$script_path $expdir $@ >> $outputfn"
+    ./$script_name $ARGS >> $outputfn
+fi
+
+cd $startDir
