@@ -1,0 +1,14 @@
+#!/bin/bash
+
+searchTerm=$1
+shift;
+
+for jar in $@;
+do
+    pomPath=$(jar tf $jar | grep pom.xml)
+    results=$(unzip -q -c $jar $pomPath | grep $searchTerm)
+    if [ ! -z "${results}" ];
+    then
+        echo $jar
+    fi
+done
